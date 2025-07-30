@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>男朋友犯错后的惩罚V2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            display: inline-block;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #000;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-template-rows: repeat(5, 50px);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .grid div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #000;
+            padding: 10px;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+        .grid div.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        .blank {
+            background-color: transparent;
+            border: none;
+            pointer-events: none;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .modal input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .modal button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>男朋友犯错后的惩罚V2</h1>
+        <div class="grid">
+            <!-- 第1行 -->
+            <div>请我吃好吃的</div>
+            <div>给我买零食</div>
+            <div>朋友圈道歉</div>
+            <div>任选一个</div>
+            
+            <!-- 第2行 -->
+            <div>请我喝奶茶</div>
+            <div class="blank"></div>
+            <div class="blank"></div>
+            <div>转账520</div>
+            
+            <!-- 第3行 -->
+            <div>一包小浣熊</div>
+            <div class="blank"></div>
+            <div class="blank"></div>
+            <div>买新衣服</div>
+            
+            <!-- 第4行 -->
+            <div>再转一次</div>
+            <div class="blank"></div>
+            <div class="blank"></div>
+            <div>全部来一次</div>
+            
+            <!-- 第5行 -->
+            <div>大喊一声爹</div>
+            <div>跪下唱征服</div>
+            <div>打屁股52下</div>
+            <div>一支口红</div>
+        </div>
+        <button onclick="handleStartSpinClick()">开始旋转</button>
+        <p id="result"></p>
+    </div>
+
+    <!-- 密码输入模态框 -->
+    <div id="passwordModal" class="modal">
+        <h2>请输入密码</h2>
+        <input type="password" id="passwordInput" placeholder="请输入密码">
+        <button onclick="checkPassword()">确认</button>
+    </div>
+
+    <!-- 几率设置模态框 -->
+    <div id="probabilityModal" class="modal">
+        <h2>设置选项几率</h2>
+        <div id="probabilityInputs"></div>
+        <button onclick="saveProbabilities()">保存</button>
+    </div>
+
+    <script>
+        let isSpinning = false;
+        let currentIndex = 0;
+        let spinInterval;
+        let targetIndex = -1;
+        let allowSelection = false;
+        let clickCount = 0;
+        let clickTimer = null;
+        const password = "5201314"; // 正确密码
+
+        // 选项列表必须与网格内容完全匹配（排除空白格）
+        const options = [
+            "请我吃好吃的",
+            "给我买零食",
+            "朋友圈道歉",
+            "任选一个",
+            "请我喝奶茶",
+            "转账520",
+            "一包小浣熊",
+            "买新衣服",
+            "再转一次",
+            "全部来一次",
+            "大喊一声爹",
+            "跪下唱征服",
+            "打屁股52下",
+            "一支口红"
+        ];
+
+        // 设置选项的几率（按顺序对应）
+        const probabilities = [10, 10, 10, 2, 10, 3, 10, 5, 10, 1, 10, 10, 5, 4];
+
+        const gridItems = document.querySelectorAll('.grid div:not(.blank)');
+        const resultElement = document.getElementById('result');
+        const passwordModal = document.getElementById('passwordModal');
+        const probabilityModal = document.getElementById('probabilityModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const probabilityInputs = document.getElementById('probabilityInputs');
+
+        // 定义顺时针顺序的索引（跳过空白格）
+        const order = [0, 1, 2, 3, 5, 7, 9, 13, 12, 11, 10, 8, 6, 4];
+
+        // 处理“开始旋转”按钮点击
+        function handleStartSpinClick() {
+            clickCount++;
+
+            // 如果是第一次点击，启动计时器
+            if (clickCount === 1) {
+                clickTimer = setTimeout(() => {
+                    clickCount = 0; // 重置点击次数
+                }, 2000); // 2秒后重置点击次数
+            }
+
+            // 如果点击次数达到6次
+            if (clickCount === 6) {
+                clearTimeout(clickTimer); // 清除计时器
+                clickCount = 0; // 重置点击次数
+                passwordModal.style.display = 'block'; // 弹出密码输入框
+            } else {
+                startSpin();
+            }
+        }
+
+        // 检查密码
+        function checkPassword() {
+            if (passwordInput.value === password) {
+                passwordModal.style.display = 'none';
+                showProbabilityModal();
+            } else {
+                alert("密码错误，请重试！");
+            }
+        }
+
+        // 显示几率设置模态框
+        function showProbabilityModal() {
+            probabilityInputs.innerHTML = options.map((option, index) => `
+                <div>
+                    <label>${option}:</label>
+                    <input type="number" value="${probabilities[index]}" min="0" max="100">
+                </div>
+            `).join('');
+            probabilityModal.style.display = 'block';
+        }
+
+        // 保存几率
+        function saveProbabilities() {
+            const inputs = probabilityInputs.querySelectorAll('input');
+            const newProbabilities = Array.from(inputs).map(input => parseInt(input.value, 10));
+            if (newProbabilities.reduce((a, b) => a + b, 0) !== 100) {
+                alert("几率总和必须为100！");
+                return;
+            }
+            probabilities.splice(0, probabilities.length, ...newProbabilities); // 更新几率
+            probabilityModal.style.display = 'none';
+            alert("几率设置成功！");
+        }
+
+        // 根据几率随机选择一个选项
+        function getRandomOption() {
+            const total = probabilities.reduce((a, b) => a + b, 0);
+            let random = Math.random() * total;
+            for (let i = 0; i < options.length; i++) {
+                if (random < probabilities[i]) {
+                    return options[i];
+                }
+                random -= probabilities[i];
+            }
+            return options[0]; // 默认返回第一个选项
+        }
+
+        // 添加点击事件监听器
+        gridItems.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                if (allowSelection && item.textContent !== "任选一个" && item.textContent !== "全部来一次") {
+                    // 显示用户的选择
+                    resultElement.innerHTML = `你的选择是: ${item.textContent}`;
+
+                    // 禁用所有选项的点击功能
+                    gridItems.forEach(item => item.classList.add('disabled'));
+                }
+            });
+        });
+
+        function startSpin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            allowSelection = false; // 不允许选择
+            resultElement.innerHTML = '旋转中...';
+            
+            // 重置所有格子颜色
+            gridItems.forEach(item => {
+                item.style.backgroundColor = '#f9f9f9';
+                item.classList.remove('disabled');
+            });
+            
+            // 开始快速旋转
+            spinInterval = setInterval(spin, 50);
+
+            // 3秒后停止旋转并逐步移动到目标
+            setTimeout(() => {
+                clearInterval(spinInterval); // 停止快速旋转
+
+                // 清除所有红色背景
+                gridItems.forEach(item => item.style.backgroundColor = '#f9f9f9');
+
+                // 根据几率随机选择一个选项
+                const selectedOption = getRandomOption();
+
+                // 找到目标选项对应的索引
+                targetIndex = Array.from(gridItems).findIndex(
+                    item => item.textContent === selectedOption
+                );
+
+                if (targetIndex === -1) return;
+
+                // 找到目标在 order 中的位置
+                const targetOrderIndex = order.indexOf(targetIndex);
+
+                // 逐步移动到目标
+                moveToTarget(currentIndex, targetOrderIndex, selectedOption);
+            }, 3000);
+        }
+
+        function spin() {
+            if (!isSpinning) return;
+
+            // 清除前一个颜色
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : order.length - 1;
+            gridItems[order[prevIndex]].style.backgroundColor = '#f9f9f9';
+
+            // 设置当前颜色
+            gridItems[order[currentIndex]].style.backgroundColor = 'red';
+
+            // 更新索引
+            currentIndex = (currentIndex + 1) % order.length;
+        }
+
+        // 逐步移动到目标
+        function moveToTarget(currentOrderIndex, targetOrderIndex, selectedOption) {
+            if (currentOrderIndex === targetOrderIndex) {
+                // 已经到达目标，停止
+                isSpinning = false;
+
+                // 显示结果文字
+                resultElement.innerHTML = `选中: ${selectedOption}`;
+
+                // 如果停在“任选一个”，允许用户选择
+                if (selectedOption === "任选一个") {
+                    allowSelection = true;
+                    gridItems.forEach(item => {
+                        if (item.textContent !== "任选一个" && item.textContent !== "全部来一次") {
+                            item.classList.remove('disabled');
+                        }
+                    });
+                } else if (selectedOption === "全部来一次") {
+                    // 如果停在“全部来一次”，开始特殊动画
+                    startAllOnceAnimation();
+                } else {
+                    allowSelection = false;
+                    gridItems.forEach(item => item.classList.add('disabled'));
+                }
+                return;
+            }
+
+            // 清除当前颜色
+            gridItems[order[currentOrderIndex]].style.backgroundColor = '#f9f9f9';
+
+            // 移动到下一个位置
+            currentOrderIndex = (currentOrderIndex + 1) % order.length;
+
+            // 设置新颜色
+            gridItems[order[currentOrderIndex]].style.backgroundColor = 'red';
+
+            // 更新当前索引
+            currentIndex = currentOrderIndex;
+
+            // 继续移动
+            setTimeout(() => moveToTarget(currentOrderIndex, targetOrderIndex, selectedOption), 50);
+        }
+
+        // 开始“全部来一次”的特殊动画
+        function startAllOnceAnimation() {
+            let animationIndex = 0;
+            const animationOrder = order.filter(index => 
+                options[index] !== "任选一个" && options[index] !== "全部来一次"
+            );
+
+            const animate = () => {
+                if (animationIndex >= animationOrder.length) {
+                    // 动画结束，回到“全部来一次”
+                    gridItems.forEach(item => item.style.backgroundColor = '#f9f9f9');
+                    gridItems[order[order.indexOf(targetIndex)]].style.backgroundColor = 'red';
+                    return;
+                }
+
+                // 设置当前格子为红色
+                gridItems[animationOrder[animationIndex]].style.backgroundColor = 'red';
+
+                // 继续下一个格子
+                animationIndex++;
+                setTimeout(animate, 200); // 每个格子间隔200ms
+            };
+
+            animate();
+        }
+    </script>
+</body>
+</html>

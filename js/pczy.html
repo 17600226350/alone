@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>男朋友惩罚 & 救赎模式</title>
+    <style>
+        /* 全局样式 */
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --accent-color: #ffe66d;
+            --dark-color: #292f36;
+            --light-color: #f7fff7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+      
+        body {
+            font-family: 'Poppins', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 10px;
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        button.secondary:hover {
+            background: #5a6268;
+        }
+
+        /* 查看版本按钮样式 */
+        #versionButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            color: white;
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            font-weight: 600;
+        }
+
+        #versionButton:hover {
+            background: #3dbeb6;
+            transform: translateY(-3px);
+        }
+
+        #versionButton:active {
+            transform: translateY(1px);
+        }
+
+        /* 查看历史版本按钮样式 */
+        #historyButton {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            color: white;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        #historyButton:hover {
+            background: #ffde59;
+            transform: translateY(-3px);
+        }
+
+        #historyButton:active {
+            transform: translateY(1px);
+        }
+
+        /* 男朋友惩罚游戏样式 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .grid div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+            background: white;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            text-align: center;
+            min-height: 60px;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+
+        .grid div:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .grid div.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .grid div.active {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .blank {
+            background: transparent;
+            border: none;
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        #result {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        /* 救赎模式样式 */
+        .redemption-options {
+            display: none;
+            grid-column: 2 / 4;
+            grid-row: 2 / 4;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 2px solid var(--secondary-color);
+        }
+
+        .redemption-options.active {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .redemption-options div {
+            margin-bottom: 0;
+            padding: 15px;
+            background: var(--light-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            box-shadow: var(--shadow);
+        }
+
+        .redemption-options div:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* 100以内加减法游戏样式 */
+        .math-game {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .math-game.active {
+            display: block;
+        }
+
+        .question-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .question-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--light-color);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .question-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .question-item span {
+            font-size: 1rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        .question-item input {
+            width: 70px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .question-item input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .result-message {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 400px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        .modal h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .modal div {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--light-color);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .modal div:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* 历史版本模态框样式 */
+        #historyModal {
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        #historyModal h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        #historyModal ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #historyModal li {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: var(--light-color);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        #historyModal li:hover {
+            transform: translateY(-3px);
+        }
+
+        #historyModal li strong {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #historyModal li p {
+            font-size: 0.95rem;
+            color: #666;
+            margin: 10px 0 0;
+            white-space: pre-line;
+        }
+
+        /* 密码输入框样式 */
+        #passwordModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #passwordInput {
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        #passwordInput:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        /* 几率设置输入框样式 */
+        #probabilityModal .modal-content {
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+        }
+
+        .probability-inputs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 50vh;
+            padding-right: 10px;
+        }
+
+        .probability-inputs div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .probability-inputs label {
+            font-weight: 500;
+            color: var(--dark-color);
+            flex: 1;
+        }
+
+        .probability-inputs input {
+            width: 80px;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .probability-inputs input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
+        }
+
+        /* 版本信息弹窗样式 */
+        .version-info {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 400px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease;
+            display: none;
+        }
+
+        .version-info h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .version-info pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .version-info button {
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+          
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(7, 1fr);
+                gap: 12px;
+            }
+          
+            .question-container {
+                grid-template-columns: 1fr;
+            }
+          
+            h1 {
+                font-size: 1.8rem;
+            }
+          
+            #versionButton, #historyButton {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+            }
+          
+            #historyButton {
+                top: 60px;
+            }
+
+            .modal {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .version-info {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .probability-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .probability-inputs div {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+
+            .probability-inputs input {
+                width: 100%;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .button-group button {
+                width: 100%;
+                margin: 0;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 查看版本按钮 -->
+    <button id="versionButton">查看版本</button>
+
+    <!-- 查看历史版本按钮 -->
+    <button id="historyButton">查看历史版本</button>
+
+    <!-- 版本信息弹窗 -->
+    <div id="versionInfoModal" class="version-info">
+        <h2>版本信息</h2>
+        <pre id="versionInfoContent"></pre>
+        <button onclick="document.getElementById('versionInfoModal').style.display='none'">关闭</button>
+        <button onclick="upgradeSystem()" style="background-color: var(--accent-color); color: var(--dark-color);">系统升级</button>
+    </div>
+
+    <!-- 选择惩罚对象模态框 -->
+    <div id="targetModal" class="modal">
+        <h2>请选择要惩罚的对象</h2>
+        <div onclick="selectTarget('男朋友')">男朋友</div>
+        <div onclick="selectTarget('女朋友')">女朋友</div>
+        <div onclick="selectTarget('妹妹')">妹妹</div>
+        <div onclick="selectTarget('弟弟')">弟弟</div>
+		<div onclick="selectTarget('哥哥')">哥哥</div>
+        <div onclick="selectTarget('孩子')">孩子</div>
+    </div>
+
+    <div class="container">
+        <!-- 男朋友惩罚游戏 -->
+        <div id="punishmentGame">
+            <h1>男朋友犯错后的惩罚</h1>
+            <div class="grid">
+                <!-- 第1行 -->
+                <div>请我吃好吃的</div>
+                <div>给我买零食</div>
+                <div>朋友圈道歉</div>
+                <div>任选一个</div>
+              
+                <!-- 第2行 -->
+                <div>请我喝奶茶</div>
+                <div class="blank"></div>
+                <div class="blank"></div>
+                <div>转账520</div>
+              
+                <!-- 第3行 -->
+                <div>一包小浣熊</div>
+                <div class="blank"></div>
+                <div class="blank"></div>
+                <div>买新衣服</div>
+              
+                <!-- 第4行 -->
+                <div>再转一次</div>
+                <div class="blank"></div>
+                <div class="blank"></div>
+                <div id="redemptionMode">救赎模式</div>
+              
+                <!-- 第5行 -->
+                <div>大喊一声爹</div>
+                <div>跪下唱征服</div>
+                <div>打屁股52下</div>
+                <div>一支口红</div>
+            </div>
+            <button onclick="handleStartSpinClick()">开始旋转</button>
+            <p id="result"></p>
+        </div>
+
+        <!-- 100以内加减法游戏 -->
+        <div id="mathGame" class="math-game">
+            <h1>100以内加减法挑战</h1>
+            <p>答对100道题目即可完成挑战！</p>
+            <div class="question-container" id="questionContainer"></div>
+            <button onclick="checkMathAnswers()">提交答案</button>
+            <p class="result-message" id="mathResult"></p>
+        </div>
+    </div>
+
+    <!-- 密码输入模态框 -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h2>请输入密码</h2>
+            <input type="password" id="passwordInput" placeholder="请输入密码">
+            <div class="button-group">
+                <button onclick="checkPassword()">确认</button>
+                <button class="secondary" onclick="document.getElementById('passwordModal').style.display='none'">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 几率设置模态框 -->
+    <div id="probabilityModal" class="modal">
+        <div class="modal-content">
+            <h2>设置选项几率</h2>
+            <div class="probability-inputs" id="probabilityInputs"></div>
+            <div class="button-group">
+                <button onclick="saveProbabilities()">保存</button>
+                <button class="secondary" onclick="document.getElementById('probabilityModal').style.display='none'">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 历史版本模态框 -->
+    <div id="historyModal" class="modal">
+        <h2>历史版本</h2>
+        <ul id="historyList"></ul>
+        <div class="button-group">
+            <button onclick="document.getElementById('historyModal').style.display='none'">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 版本信息
+        const version = "V3.2.0"; // 设置当前版本号
+        const updateDate = "2025-7-29"; // 更新时间
+        const author = "小郑很忙"; // 作者
+        const updateNotes = `
+            - 增加系统更新功能
+            - 修复已知bug
+        `; // 版本更新说明
+
+        // 历史版本数据
+        const historyVersions = [
+		{
+                version: "V3.1.0",
+                date: "2025-3-27",
+                notes: `
+					- 优化界面样式
+					- 优化输入密码后无法取消
+					- 优化几率无法保存退出问题
+					- 修复已知bug
+                `
+            },
+            {
+                version: "V3.0.0",
+                date: "2025-3-24",
+                notes: `
+					- 新增弹窗模式，妹妹、弟弟等选项，可以进行选择
+				    - 新增查看版本
+                `
+            },
+            {
+                version: "V2.3.0",
+                date: "2025-3-22",
+                notes: `
+					- UI全面优化
+					- 新增救赎模式
+					- 100以内加减法游戏移救赎模式。
+					- 新增二次转动。
+                `
+            },
+            {
+                version: "V2.1.0",
+                date: "2025-3-20",
+                notes: `
+					- 升级全新版本
+                    - 优化了选择惩罚对象的逻辑。
+                    - 增加了100以内加减法游戏。
+                    - 修复了双击六下无法触发密码输入框的问题。
+                `
+            },
+            {
+                version: "V2.0.0",
+                date: "2025-3-19",
+                notes: `
+					- 升级全新版本
+                    - 新增密码功能
+					- 项目几率修改
+					- 完善已知bug
+                `
+            },
+            {
+                version: "V1.2.0",
+                date: "2025-03-19",
+                notes: `
+                    - 完善已知bug
+                `
+            },
+            {
+                version: "V1.0.0",
+                date: "2025-03-19",
+                notes: `
+                    - 男朋友犯错后的惩罚发布。
+                `
+            }
+        ];
+
+        // 查看版本按钮点击事件
+        document.getElementById('versionButton').addEventListener('click', () => {
+            const versionInfo = `当前版本：${version}\n更新时间：${updateDate}\n作者：${author}\n\n版本更新说明：\n${updateNotes}`;
+            document.getElementById('versionInfoContent').textContent = versionInfo;
+            document.getElementById('versionInfoModal').style.display = 'block';
+        });
+
+        // 系统升级功能
+        function upgradeSystem() {
+            const versionInfoModal = document.getElementById('versionInfoModal');
+            versionInfoModal.querySelector('h2').textContent = '系统升级中...';
+            versionInfoModal.querySelector('pre').textContent = '正在检查更新...';
+          
+            // 模拟升级过程
+            <!-- setTimeout(() => { -->
+                <!-- versionInfoModal.querySelector('pre').textContent += '\n\n✓ 正在下载更新文件...'; -->
+              
+                <!-- setTimeout(() => { -->
+                    <!-- versionInfoModal.querySelector('pre').textContent += '\n✓ 更新文件下载完成！'; -->
+                    <!-- versionInfoModal.querySelector('pre').textContent += '\n✓ 正在验证文件完整性...'; -->
+                  
+                    <!-- setTimeout(() => { -->
+                        <!-- versionInfoModal.querySelector('pre').textContent += '\n✓ 文件验证通过！'; -->
+                        <!-- versionInfoModal.querySelector('pre').textContent += '\n✓ 正在安装更新...'; -->
+                      
+                        <!-- setTimeout(() => { -->
+                            <!-- versionInfoModal.querySelector('pre').textContent += '\n\n🎉 系统升级完成！'; -->
+                            <!-- versionInfoModal.querySelector('pre').textContent += '\n\n更新内容：'; -->
+                            <!-- versionInfoModal.querySelector('pre').textContent += '\n- 优化了系统性能'; -->
+                            <!-- versionInfoModal.querySelector('pre').textContent += '\n- 增加了新功能'; -->
+                            <!-- versionInfoModal.querySelector('pre').textContent += '\n- 修复了已知问题'; -->
+                          
+                            <!-- const upgradeButton = versionInfoModal.querySelector('button[onclick="upgradeSystem()"]'); -->
+                            <!-- upgradeButton.textContent = '重启应用'; -->
+                            <!-- upgradeButton.onclick = function() { -->
+                                <!-- location.reload(); -->
+                            <!-- }; -->
+                        <!-- }, 1500); -->
+                    <!-- }, 1500); -->
+                <!-- }, 1500); -->
+            <!-- }, 500); -->
+			
+			setTimeout(() => { 
+                versionInfoModal.querySelector('pre').textContent += '\n\n✓ 系统目前已是最新';
+              
+                const upgradeButton = versionInfoModal.querySelector('button[onclick="upgradeSystem()"]');
+                            upgradeButton.textContent = '重启应用';
+                            upgradeButton.onclick = function() {
+                                location.reload();
+                            }
+             }, 500); 
+        }
+
+        // 查看历史版本按钮点击事件
+        document.getElementById('historyButton').addEventListener('click', () => {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = historyVersions.map(version => `
+                <li>
+                    <strong>版本 ${version.version} (${version.date})</strong>
+                    <p>${version.notes}</p>
+                </li>
+            `).join('');
+            document.getElementById('historyModal').style.display = 'block';
+        });
+
+        // 显示选择惩罚对象模态框
+        const targetModal = document.getElementById('targetModal');
+        targetModal.style.display = 'block';
+
+        // 选择惩罚对象
+        function selectTarget(target) {
+            targetModal.style.display = 'none'; // 隐藏模态框
+
+            if (target === '男朋友') {
+                document.getElementById('punishmentGame').style.display = 'block'; // 显示惩罚游戏
+            } else if (target === '女朋友') {
+                alert('女朋友怎么可能会犯错？请重新选择！');
+                targetModal.style.display = 'block'; // 重新显示模态框
+            } else if (target === '妹妹') {
+                alert('妹妹犯错请哥哥们吃海底捞！');
+                targetModal.style.display = 'block'; // 重新显示模态框
+            } else if (target === '哥哥') {
+                alert('哥哥怎么可能会犯错，就算错了请哥哥吃饭就可以了');
+                targetModal.style.display = 'block'; // 重新显示模态框
+            } else if (target === '孩子') {
+                document.getElementById('punishmentGame').style.display = 'none'; // 隐藏惩罚游戏
+                document.getElementById('mathGame').style.display = 'block'; // 显示加减法游戏
+                generateMathQuestions(); // 生成题目
+            } else {
+                alert('当前版本暂不支持惩罚' + target + '，请重新选择！');
+                targetModal.style.display = 'block'; // 重新显示模态框
+            }
+        }
+
+        // 生成100以内的加减法题目
+        function generateMathQuestions() {
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = ''; // 清空之前的题目
+            questions = []; // 重置题目数组
+
+            for (let i = 0; i < 10; i++) {
+                const num1 = Math.floor(Math.random() * 100);
+                const num2 = Math.floor(Math.random() * 100);
+                const operator = Math.random() > 0.5 ? '+' : '-';
+                const question = {
+                    text: `${num1} ${operator} ${num2} = ?`,
+                    answer: operator === '+' ? num1 + num2 : num1 - num2
+                };
+                questions.push(question);
+
+                // 创建题目和输入框
+                const questionItem = document.createElement('div');
+                questionItem.className = 'question-item';
+                questionItem.innerHTML = `
+                    <span>${question.text}</span>
+                    <input type="number" class="mathAnswer" data-index="${i}">
+                `;
+                container.appendChild(questionItem);
+            }
+        }
+
+        // 检查答案
+        let correctCount = 0; // 记录答对的题目数量
+        let questions = []; // 存储当前10道题目
+
+        function checkMathAnswers() {
+            const inputs = document.querySelectorAll('.mathAnswer');
+            let allCorrect = true;
+
+            inputs.forEach((input, index) => {
+                const userAnswer = parseInt(input.value, 10);
+                const correctAnswer = questions[index].answer;
+
+                if (userAnswer === correctAnswer) {
+                    input.style.borderColor = 'green'; // 答案正确，输入框变绿
+                } else {
+                    input.style.borderColor = 'red'; // 答案错误，输入框变红
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                correctCount += 10; // 答对10道题目
+                document.getElementById('mathResult').textContent = `已答对 ${correctCount} 道题目！`;
+
+                if (correctCount >= 100) {
+                    document.getElementById('mathResult').textContent = '你真棒！完成了100道题目挑战！';
+                    correctCount = 0; // 重置计数
+                }
+                generateMathQuestions(); // 生成新的10道题目
+            } else {
+                document.getElementById('mathResult').textContent = '有错误答案，请检查后重新提交！';
+            }
+        }
+
+        // 男朋友惩罚游戏逻辑
+        let isSpinning = false;
+        let currentIndex = 0;
+        let spinInterval;
+        let targetIndex = -1;
+        let allowSelection = false;
+        let clickCount = 0;
+        let clickTimer = null;
+        const password = "5201314"; // 正确密码
+
+        const options = [
+            "请我吃好吃的",
+            "给我买零食",
+            "朋友圈道歉",
+            "任选一个",
+            "请我喝奶茶",
+            "转账520",
+            "一包小浣熊",
+            "买新衣服",
+            "再转一次",
+            "救赎模式",
+            "大喊一声爹",
+            "跪下唱征服",
+            "打屁股52下",
+            "一支口红"
+        ];
+
+        const probabilities = [10, 10, 10, 2, 10, 3, 10, 5, 10, 1, 10, 10, 5, 4];
+
+        const gridItems = document.querySelectorAll('.grid div:not(.blank)');
+        const resultElement = document.getElementById('result');
+        const passwordModal = document.getElementById('passwordModal');
+        const probabilityModal = document.getElementById('probabilityModal');
+        const passwordInput = document.getElementById('passwordInput');
+        const probabilityInputs = document.getElementById('probabilityInputs');
+
+        const order = [0, 1, 2, 3, 5, 7, 9, 13, 12, 11, 10, 8, 6, 4];
+
+        // 处理"开始旋转"按钮点击
+        function handleStartSpinClick() {
+            clickCount++;
+
+            // 如果是第一次点击，启动计时器
+            if (clickCount === 1) {
+                clickTimer = setTimeout(() => {
+                    clickCount = 0; // 重置点击次数
+                }, 2000); // 2秒后重置点击次数
+            }
+
+            // 如果点击次数达到6次
+            if (clickCount === 6) {
+                clearTimeout(clickTimer); // 清除计时器
+                clickCount = 0; // 重置点击次数
+                passwordModal.style.display = 'block'; // 弹出密码输入框
+                passwordInput.value = ''; // 清空密码输入框
+                passwordInput.focus(); // 聚焦到密码输入框
+            } else {
+                startSpin();
+            }
+        }
+
+        // 开始旋转
+        function startSpin() {
+            if (isSpinning) return;
+            isSpinning = true;
+            allowSelection = false; // 不允许选择
+            resultElement.innerHTML = '旋转中...';
+          
+            // 重置所有格子颜色
+            gridItems.forEach(item => {
+                item.style.backgroundColor = 'white';
+                item.classList.remove('disabled');
+            });
+          
+            // 开始快速旋转
+            spinInterval = setInterval(spin, 50);
+
+            // 3秒后停止旋转并逐步移动到目标
+            setTimeout(() => {
+                clearInterval(spinInterval); // 停止快速旋转
+
+                // 清除所有红色背景
+                gridItems.forEach(item => item.style.backgroundColor = 'white');
+
+                // 根据几率随机选择一个选项
+                const selectedOption = getRandomOption();
+
+                // 找到目标选项对应的索引
+                targetIndex = Array.from(gridItems).findIndex(
+                    item => item.textContent === selectedOption
+                );
+
+                if (targetIndex === -1) return;
+
+                // 找到目标在 order 中的位置
+                const targetOrderIndex = order.indexOf(targetIndex);
+
+                // 逐步移动到目标
+                moveToTarget(currentIndex, targetOrderIndex, selectedOption);
+            }, 3000);
+        }
+
+        // 快速旋转
+        function spin() {
+            if (!isSpinning) return;
+
+            // 清除前一个颜色
+            const prevIndex = currentIndex > 0 ? currentIndex - 1 : order.length - 1;
+            gridItems[order[prevIndex]].style.backgroundColor = 'white';
+            gridItems[order[prevIndex]].style.color = 'var(--dark-color)';
+
+            // 设置当前颜色
+            gridItems[order[currentIndex]].style.backgroundColor = '#ff6b6b';
+            gridItems[order[currentIndex]].style.color = 'white';
+
+            // 更新索引
+            currentIndex = (currentIndex + 1) % order.length;
+        }
+
+        // 逐步移动到目标
+        function moveToTarget(currentOrderIndex, targetOrderIndex, selectedOption) {
+            if (currentOrderIndex === targetOrderIndex) {
+                // 已经到达目标，停止
+                isSpinning = false;
+
+                // 显示结果文字
+                resultElement.innerHTML = `选中: ${selectedOption}`;
+
+                // 如果停在"任选一个"，允许用户选择
+                if (selectedOption === "任选一个") {
+                    allowSelection = true;
+                    gridItems.forEach(item => {
+                        if (item.textContent !== "任选一个" && item.textContent !== "救赎模式") {
+                            item.classList.remove('disabled');
+                            // 添加点击事件监听器
+                            item.addEventListener('click', () => {
+                                resultElement.innerHTML = `选中: ${item.textContent}`;
+                                allowSelection = false;
+                                gridItems.forEach(item => item.classList.add('disabled'));
+                            });
+                        }
+                    });
+                } else if (selectedOption === "救赎模式") {
+                    // 如果停在"救赎模式"，显示救赎选项
+                    document.getElementById('redemptionMode').innerHTML = `
+                        <div>全都来一次</div>
+                        <div>100以内加减法</div>
+                    `;
+                    document.getElementById('redemptionMode').classList.add('active');
+                    resultElement.innerHTML = '请选择救赎选项';
+                } else {
+                    allowSelection = false;
+                    gridItems.forEach(item => item.classList.add('disabled'));
+                }
+                return;
+            }
+
+            // 清除当前颜色
+            gridItems[order[currentOrderIndex]].style.backgroundColor = 'white';
+            gridItems[order[currentOrderIndex]].style.color = 'var(--dark-color)';
+
+            // 移动到下一个位置
+            currentOrderIndex = (currentOrderIndex + 1) % order.length;
+
+            // 设置新颜色
+            gridItems[order[currentOrderIndex]].style.backgroundColor = '#ff6b6b';
+            gridItems[order[currentOrderIndex]].style.color = 'white';
+
+            // 更新当前索引
+            currentIndex = currentOrderIndex;
+
+            // 继续移动
+            setTimeout(() => moveToTarget(currentOrderIndex, targetOrderIndex, selectedOption), 50);
+        }
+
+        // 开始救赎模式旋转
+        function startRedemptionSpin() {
+            const redemptionOptions = document.querySelectorAll('#redemptionMode div');
+            let redemptionIndex = 0;
+            let redemptionInterval;
+			
+			        // 快速旋转
+        redemptionInterval = setInterval(() => {
+            redemptionOptions.forEach(option => {
+                option.style.backgroundColor = 'white';
+                option.style.color = 'var(--dark-color)';
+            });
+            redemptionOptions[redemptionIndex].style.backgroundColor = '#ff6b6b';
+            redemptionOptions[redemptionIndex].style.color = 'white';
+            redemptionIndex = (redemptionIndex + 1) % redemptionOptions.length;
+        }, 100);
+
+        // 3秒后停止旋转
+        setTimeout(() => {
+            clearInterval(redemptionInterval);
+            redemptionOptions.forEach(option => {
+                option.style.backgroundColor = 'white';
+                option.style.color = 'var(--dark-color)';
+            });
+            const selectedRedemption = redemptionOptions[Math.floor(Math.random() * redemptionOptions.length)];
+            selectedRedemption.style.backgroundColor = '#ff6b6b';
+            selectedRedemption.style.color = 'white';
+            resultElement.innerHTML = `救赎模式选中: ${selectedRedemption.textContent}`;
+
+            // 如果选中"100以内加减法"，跳转到游戏
+            if (selectedRedemption.textContent === "100以内加减法") {
+                document.getElementById('punishmentGame').style.display = 'none';
+                document.getElementById('mathGame').style.display = 'block';
+                generateMathQuestions();
+            }
+        }, 3000);
+    }
+
+    // 根据几率随机选择一个选项
+    function getRandomOption() {
+        const total = probabilities.reduce((a, b) => a + b, 0);
+        let random = Math.random() * total;
+        for (let i = 0; i < options.length; i++) {
+            if (random < probabilities[i]) {
+                return options[i];
+            }
+            random -= probabilities[i];
+        }
+        return options[0]; // 默认返回第一个选项
+    }
+
+    // 检查密码
+    function checkPassword() {
+        if (passwordInput.value === password) {
+            passwordModal.style.display = 'none';
+            showProbabilityModal();
+        } else {
+            alert("密码错误，请重试！");
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    }
+
+    // 显示几率设置模态框
+    function showProbabilityModal() {
+        probabilityInputs.innerHTML = options.map((option, index) => `
+            <div>
+                <label>${option}:</label>
+                <input type="number" value="${probabilities[index]}" min="0" max="100">
+            </div>
+        `).join('');
+        probabilityModal.style.display = 'block';
+    }
+
+    // 保存几率
+    function saveProbabilities() {
+        const inputs = probabilityInputs.querySelectorAll('input');
+        const newProbabilities = Array.from(inputs).map(input => parseInt(input.value, 10));
+        if (newProbabilities.reduce((a, b) => a + b, 0) !== 100) {
+            alert("几率总和必须为100！");
+            return;
+        }
+        probabilities.splice(0, probabilities.length, ...newProbabilities); // 更新几率
+        probabilityModal.style.display = 'none';
+        alert("几率设置成功！");
+    }
+
+    // 初始化救赎模式选项点击事件
+    document.getElementById('redemptionMode').addEventListener('click', (e) => {
+        if (e.target.tagName === 'DIV') {
+            startRedemptionSpin();
+        }
+    });
+
+    // 点击模态框外部关闭模态框
+    window.addEventListener('click', (e) => {
+        if (e.target === passwordModal) {
+            passwordModal.style.display = 'none';
+        }
+        if (e.target === probabilityModal) {
+            probabilityModal.style.display = 'none';
+        }
+        if (e.target === historyModal) {
+            historyModal.style.display = 'none';
+        }
+        if (e.target === document.getElementById('versionInfoModal')) {
+            document.getElementById('versionInfoModal').style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>
